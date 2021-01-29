@@ -18,7 +18,7 @@ class Product extends Model
     use HasFactory;
     protected $fillable=['title','image','price','description'];
 
-    protected $table='product';
+
 
     public static $createRules=[
         'title'=>['required','unique:products'],
