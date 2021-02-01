@@ -53,6 +53,16 @@
             </textarea>
         </div>
 
+        <div class="form-group">
+            <label for="module_id">Website</label>
+            <select class="form-control" name="web_id" id="web_id">
+                <option value="">Select Website</option>
+                @foreach($webs as $web)
+                    <option value="{{$web->id}}" @if($web->id==old('web_id')) selected @endif>{{$web->title}}</option>
+                @endforeach
+            </select>
+        </div>
+
         <button type="submit" class="btn btn-default">CREATE PRODUCT</button>
     </form>
 </div>

@@ -3,6 +3,7 @@
 
 namespace App\Modules\products\Models;
 
+use App\Models\Setting;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -19,19 +20,23 @@ class Product extends Model
     protected $fillable=['title','image','price','description'];
 
 
+    protected $guarded=['guarded'];
 
     public static $createRules=[
         'title'=>['required','unique:products'],
         'image'=>['required','image'],
         'price'=>['required','numeric','min:1'],
-        'description'=>['required']
+        'description'=>['required'],
+        'web_id'=>['required','exists:webs,id']
     ];
 
     public static $updateRules=[
         'title'=>['required'],
         'image'=>['image'],
         'price'=>['required','numeric','min:1'],
-        'description'=>['required']
+        'description'=>['required'],
+        'web_id'=>['required','exists:webs,id']
+
     ];
 
     public static $errorMessage=[
@@ -41,18 +46,31 @@ class Product extends Model
         'price.required'=>'THIS PRICE IS REQUIRED',
         'price.numeric'=>'THIS PRICE MUST BE NUMBER',
         'price.min'=>'THIS PRICE MIN VALUE IS 1',
-        'description.required'=>'THIS DESCRIPTION IS REQUIRED'
+        'description.required'=>'THIS DESCRIPTION IS REQUIRED',
+        'web_id.required'=>'THIS WEBSITE IS REQUIRED',
+        'web_id.exists'=>'THIS WEBSITE IS NOT EXISTS',
     ];
 
 
 
-    public static function uploadImg($request,$name,$image=null){
+    public static function uploadImg($request,$name,$image,$web_id){
+
         if($request->hasFile($name)){
             if($image){
                 Storage::delete($image);
             }
-            $folder="product1111/{$name}/".date("Y-m-d");
-            return $request->file($name)->store("images/{$folder}");
+           $setting=Setting::where('web_id','=',$web_id)->where('module_id','=',4)->first();
+
+           if($setting){
+               $folder_name=$setting->field_value;
+           }else{
+               $folder_name='product';
+           }
+
+
+
+            $folder="{$folder_name}/{$name}/".date("Y-m-d");
+            return $request->file($name)->store("{$folder}");
         }
         return null;
     }
