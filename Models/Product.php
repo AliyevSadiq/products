@@ -59,7 +59,7 @@ class Product extends Model
             if($image){
                 Storage::delete($image);
             }
-           $setting=Setting::where('web_id','=',$web_id)->where('module_id','=',4)->first();
+           $setting=Setting::where('web_id','=',$web_id)->where('module_name','=','products')->first();
 
            if($setting){
                $folder_name=$setting->field_value;
